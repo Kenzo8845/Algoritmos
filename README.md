@@ -1,1 +1,2 @@
-Exercícios UEL, algotimos 1° ano Ciencia da Compuração;
+Exercícios UEL, algotimos 1° ano Ciencia da Computação;
+
