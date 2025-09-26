@@ -1,0 +1,309 @@
+/*Faça um programa que leia números positivos e os converta em binário.
+Cada número binário deverá ser salvo em uma linha de um arquivo texto. O
+programa termina quando o usuário digitar um número negativo.*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+int ConverteBinario (int Numero) {
+    int Binario = 0;
+    double i = 0;
+    while (1) {
+        Binario = Binario + ((Numero % 2) * pow(10, i));
+        Numero /= 2;
+        i++;
+        
+        if (Numero == 1) {
+            Binario += pow(10, i);
+            break;
+        }
+    }
+    return Binario;
+}
+
+int main() {
+    int NumeroUser;
+    printf("Digite numeros para serem convertidos para binarios:\n(Digite um negativo para sair)");
+    FILE *Binarios = fopen("Binarios.txt", "w");
+    
+    while(1) {
+    scanf("%d", &NumeroUser);
+     if(NumeroUser < 0) {
+        fclose(Binarios);
+        return 0;
+     }
+
+     fprintf(Binarios, "%d\n", ConverteBinario(NumeroUser));
+    }
+
+}
+
+2-
+/*Faça um programa que leia um arquivo texto contendo uma lista de
+compras. Cada linha do arquivo possui nome, quantidade e valor unitário do
+produto. O programa então exibe o total da compra.*/
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    char nome[50];
+    int quantidade;
+    double v_unitario, v_total = 0;
+
+    FILE *compras = fopen("compras.txt", "r");
+    
+    while(fscanf(compras, "%s %d %lf", nome, &quantidade, &v_unitario) == 3) {
+        v_total += (quantidade * v_unitario);
+    }
+
+    fclose(compras);
+
+    printf("Valor total: %.2lf", v_total);
+
+    return 0;
+}
+
+
+3-
+/*Dado um arquivo contendo um conjunto de nomes e datas de nascimento
+(dia, mês e ano, isto é, três inteiros seguidos), escrever um programa que leia
+esse arquivo e a data atual e gere outro arquivo contendo o nome e a idade.*/
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    char nome[50];
+    int dia, mes, ano;
+    int diaHoje, mesHoje, anoHoje;
+
+    printf("Qual a data de hoje?");
+    scanf("%d %d %d", &diaHoje, &mesHoje, &anoHoje);
+
+    FILE *NomesDatas = fopen("NomesDatas.txt", "r");
+    FILE *NomesIdades = fopen("NomesIdades.txt", "w");
+
+
+
+    while(fscanf(NomesDatas, "%s %d %d %d", nome, &dia, &mes, &ano) == 4) {
+        if (mes >= mesHoje && dia >= diaHoje) {               // nao fez aniversario ainda
+            fprintf(NomesIdades, "%s %d\n", nome, anoHoje - ano - 1);
+        }
+        else {
+            fprintf(NomesIdades, "%s %d\n", nome, anoHoje - ano);
+        }
+    }
+
+    fclose(NomesDatas);
+    fclose(NomesIdades);
+
+    return 0;
+}
+
+4-
+
+/*Um arquivo texto possui uma matriz de valores inteiros dentro dele. Os
+dois primeiros números são as dimensões da matriz (linhas e colunas),
+enquanto o restante dos números são os valores de cada elemento da
+matriz. Escreva uma função que receba o nome do arquivo e retorne o
+ponteiro para uma matriz alocada dinamicamente contendo os valores lidos
+do arquivo.*/
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int **FileMatriz(char nome[], int *linha, int *coluna) {
+    int numero;
+    FILE *matriztxt = fopen(nome, "r");
+
+    fscanf(matriztxt, "%d %d", linha, coluna);
+    int **matriz;
+
+    matriz = (int **) malloc(*linha * sizeof(int *));
+
+    for (int i = 0; i < *linha; i++) {
+        matriz[i] = (int *) malloc(*coluna * sizeof(int));
+    } 
+
+    for (int i = 0; i < *linha; i++) {
+        for (int j = 0; j < *coluna; j++) {
+            fscanf(matriztxt, "%d", &numero);
+            matriz[i][j] = numero;
+        }
+    }
+    return matriz;
+}
+
+int main() {
+    int linha, coluna;
+    
+    printf("digite o nome de seu arquivo:");
+
+    char Arquivo[50];
+    fgets(Arquivo, sizeof(Arquivo), stdin);
+    
+    for (int i = 0; Arquivo[i] != '\0'; i++) {
+        if (Arquivo[i] == '\n') {
+        Arquivo[i] = '\0';
+        break;            
+        }
+    }   
+
+    int **matriz = FileMatriz(Arquivo, &linha, &coluna);
+
+    for (int i = 0; i < linha; i++) {
+        for (int j = 0; j < coluna; j++) {
+            printf("%d\t", matriz[i][j]);
+        }
+        printf("\n");
+    }
+
+
+    return 0;
+}
+
+5-
+#include <stdio.h>
+
+void contarLetras(FILE *arquivo, int contagem[26]) {
+
+    char c;
+    while((c = fgetc(arquivo)) != EOF) {
+        if (c >= 'a' && c <= 'z') {
+            contagem[c - 'a']++;
+        }
+        else if (c >= 'A' && c <= 'Z') {
+            contagem[c - 'A']++;
+        }
+    }
+}
+
+void imprimirContagem(int contagem[26]) {
+    printf("\n--- Ocorrência de letras no arquivo ---\n");
+    for (int i = 0; i < 26; i++) {
+        if (contagem[i] > 0) {
+            printf("%c: %d\n", 'a' + i, contagem[i]);
+        }
+    }
+}
+
+int main() {
+    char nomeArquivo[100];
+    FILE *arquivo;
+    int contagem[26];
+    
+    for (int i = 0; i < 26; i++) {
+    contagem[i] = 0;
+    }
+
+    printf("digite um nome para seu arquivo(com o caminho): \n");
+    scanf("%s", nomeArquivo);
+
+    arquivo = fopen(nomeArquivo, "r");
+    if (arquivo == NULL) {
+        printf("erro ao abrir o arquivo");
+        return 1;
+    }
+    else  {
+        contarLetras(arquivo, contagem);
+        fclose(arquivo);
+        imprimirContagem(contagem);
+    }
+
+    return 0;
+}
+
+6-
+/*Crie uma estrutura representando um atleta. Essa estrutura deve conter o
+nome do atleta, seu esporte, idade e altura. Agora, escreva um programa que
+leia os dados de cinco atletas e os armazene em um arquivo.*/
+#include <stdio.h>
+
+struct Atleta {
+    char nome[50], esporte[50];
+    int idade;
+    double altura;
+};
+
+int main() {
+    struct Atleta Atletas[5];
+
+    FILE *Atletastxt = fopen("atletas.txt", "w");
+
+    for (int i = 0; i < 5; i++) {
+        printf("digite o nome, esporte, idade e altura de seu atleta:");
+        
+        fgets(Atletas[i].nome, sizeof(Atletas[i].nome), stdin);
+          for (int j = 0; Atletas[i].nome[j] != '\0'; j++) {
+            if (Atletas[i].nome[j] == '\n') {
+                Atletas[i].nome[j] = '\0';
+                break;
+            }
+        }
+        
+        fgets(Atletas[i].esporte, sizeof(Atletas[i].esporte), stdin);
+          for (int j = 0; Atletas[i].esporte[j] != '\0'; j++) {
+            if (Atletas[i].esporte[j] == '\n') {
+                Atletas[i].esporte[j] = '\0';
+                break;
+            }
+        }
+        
+        scanf("%d", &Atletas[i].idade);
+        
+        scanf("%lf", &Atletas[i].altura);
+
+        while (getchar() != '\n');
+    }
+
+    for (int i = 0; i < 5; i++) {
+        fprintf(Atletastxt, "Nome: %s\n", Atletas[i].nome);
+        fprintf(Atletastxt, "Esporte: %s\n", Atletas[i].esporte);
+        fprintf(Atletastxt, "Idade: %d\n", Atletas[i].idade);
+        fprintf(Atletastxt, "Altura: %.2lf\n\n", Atletas[i].altura);
+    }
+
+    fclose(Atletastxt);
+    return 0;
+}
+
+8-
+
+#include <stdio.h>
+
+void salvarMatriz(int lin, int col, int matriz[lin][col]) {
+    FILE *arquivo = fopen("matriz.txt", "w");
+    
+    for (int i = 0; i < lin; i++) {
+        for (int j = 0; j < col; j++) {
+            fprintf(arquivo, "%d\t", matriz[i][j]);
+        }
+        fprintf(arquivo, "\n");
+    }
+    fclose(arquivo);
+}
+
+int main() {
+    int lin, col;
+
+    printf("digite o número de linhas da sua matriz: \n");
+    scanf("%d", &lin);
+    printf("digite o número de colunas da sua matriz: \n");
+    scanf("%d", &col);
+
+    int mat[lin][col];
+
+    printf("digite os números de sua matriz: \n");
+
+    for (int i = 0; i < lin; i++) {
+        for (int j = 0; j < col; j++) {
+            scanf("%d", &mat[i][j]);
+        }
+    }
+
+    salvarMatriz(lin, col, mat);
+
+    return 0;
+}

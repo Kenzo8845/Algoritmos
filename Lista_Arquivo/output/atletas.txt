@@ -1,0 +1,25 @@
+Nome: Kenai
+Esporte: Vagabundebol
+Idade: 18
+Altura: 1.70
+
+Nome: Julia
+Esporte: Ping-Pong
+Idade: 18
+Altura: 1.60
+
+Nome: Iroa
+Esporte: Volei
+Idade: 22
+Altura: 1.73
+
+Nome: Pietra
+Esporte: Polo_Aquatico
+Idade: 14
+Altura: 1.53
+
+Nome: Junior
+Esporte: Pesca
+Idade: 53
+Altura: 1.75
+

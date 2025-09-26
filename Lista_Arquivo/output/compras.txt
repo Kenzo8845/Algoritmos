@@ -1,0 +1,3 @@
+Arroz 5 15.5
+Feijao 3 10
+Pao de Batata 10 3.5
